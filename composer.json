@@ -7,12 +7,12 @@
     ],
     "license": "MIT",
     "require": {
-        "php": ">=7.1.0"
+        "php": ">=7.1.0",
+        "armincms/arminsms": "^0.1"
     },
     "autoload": {
         "psr-4": {
-            "Armincms\\Api\\": "src/",
-            "armincms/arminsms": "^0.1"
+            "Armincms\\Api\\": "src/"
         }
     },
     "extra": {
