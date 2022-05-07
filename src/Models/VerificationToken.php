@@ -26,7 +26,9 @@ class VerificationToken extends Model
      */
     public static function createForUser($user, $code)
     {
-        return static::unguarded(function() use ($user, $code) {
+        static::resetForUser($user);
+
+        return static::unguarded(function() use ($user, $code) { 
             return static::firstOrCreate([
                 'auth_id'   => $user->getKey(),
                 'auth_type' => $user->getMorphClass(),
@@ -34,6 +36,20 @@ class VerificationToken extends Model
                 'hash'      => app('hash')->make($code),
             ]); 
         });
+    }
+
+    /**
+     * Create new token for the user by given code.
+     * 
+     * @param  \Illuminate\Database\Eloqeunt\Model $user 
+     * @param  string $code 
+     * @return \Illuminate\Database\Eloqeunt\Model       
+     */
+    public static function resetForUser($user)
+    {
+        static::authorize($user)->delete();
+
+        return new static;
     }
 
     public function check($code)

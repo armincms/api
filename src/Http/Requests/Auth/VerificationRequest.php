@@ -31,12 +31,12 @@ class VerificationRequest extends AuthRequest
         }  
 
         return User::firstOrCreate([
-            'name' => $this->credentials,
-            'email' => $this->credentials,
-            'password' => Hash::make($this->password ?? $this->credentials), 
+            'name' => $this->credential,
+            'email' => $this->credential,
+            'password' => app('hash')->make($this->password ?? $this->credential), 
             'metadata::firstname' => $this->firstname,
             'metadata::lastname' => $this->lastname, 
-            "metadata::mobile" => $this->broker === 'mobile' ? $this->credentials : null 
+            "metadata::mobile" => $this->broker === 'mobile' ? $this->credential : null 
         ]);
     }
 
@@ -54,7 +54,10 @@ class VerificationRequest extends AuthRequest
         return [ 
             'mobile' => function($query) {
                 $query->whereHas('metadatas', function($query) {
-                    $query->where('key', 'mobile')->where('value', $this->credentials);
+                    $query
+                        ->where('key', 'mobile')
+                        ->where('value', $this->credential)
+                        ->whereNotNull('value');
                 });
             }
         ];

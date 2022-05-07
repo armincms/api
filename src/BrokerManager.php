@@ -24,8 +24,7 @@ class BrokerManager extends Manager
 
     /**
      * Create a new log driver instance.
-     *
-     * @param  string  $driver
+     * 
      * @return mixed
      *
      * @throws \InvalidArgumentException
@@ -36,12 +35,24 @@ class BrokerManager extends Manager
     }
 
     /**
+     * Create a new sms driver instance.
+     * 
+     * @return mixed
+     *
+     * @throws \InvalidArgumentException
+     */ 
+    public function createSmsDriver()
+    {
+        return new SmsBroker;
+    }
+
+    /**
      * Get the default driver name.
      *
      * @return string
      */
     public function getDefaultDriver()
     {
-        return 'log';
+        return Nova\Api::broker();
     }
 }

@@ -11,7 +11,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Armincms\\Api\\": "src/"
+            "Armincms\\Api\\": "src/",
+            "armincms/arminsms": "^0.1"
         }
     },
     "extra": {

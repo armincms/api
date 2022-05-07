@@ -42,15 +42,18 @@ class VerificationController extends Controller
      */
     public function store(Request $request)
     {  
-        $token = VerificationToken::with('auth')->where([ 
-            'token' => $request->token 
-        ])->first();
+        $token = VerificationToken::with('auth')    
+            ->whereToken($request->token)
+            ->where('created_at', '>=', (string) now()->subMinute(5))
+            ->first();
 
         if(! optional($token)->check($request->verification_code)) { 
             throw ValidationException::withMessages([
                 'verification_code' => __('Invalid verification code'),
             ]);
-        }  
+        } 
+
+        VerificationToken::resetForUser($token->auth); 
 
         // send welcome message
         $message = str_replace('[USER]', $token->auth->name, Api::welcomeMessage());
