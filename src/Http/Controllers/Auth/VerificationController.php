@@ -5,6 +5,7 @@ namespace Armincms\Api\Http\Controllers\Auth;
 use Armincms\Api\Http\Controllers\Controller; 
 use Armincms\Api\Http\Requests\Auth\VerificationRequest;  
 use Armincms\Api\Models\VerificationToken;
+use Armincms\Api\Nova\Api;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -23,7 +24,9 @@ class VerificationController extends Controller
             $code = rand(99999,999999)
         ); 
 
-        app('verification.broker')->notify($user, $code);
+        // send verification code
+        $message = str_replace('[CODE]', $code, Api::verificationMessage());
+        app('verification.broker')->notify($user, $message);
 
         return response()->json([
             'status' => 'verification-code-sent',
@@ -48,6 +51,10 @@ class VerificationController extends Controller
                 'verification_code' => __('Invalid verification code'),
             ]);
         }  
+
+        // send welcome message
+        $message = str_replace('[USER]', $token->auth->name, Api::welcomeMessage());
+        app('verification.broker')->notify($token->auth, $message);
 
         return response()->json([
             'status'=> 'verified',

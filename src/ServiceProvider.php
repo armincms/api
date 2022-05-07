@@ -5,7 +5,7 @@ namespace Armincms\Api;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 use Laravel\Nova\Events\ServingNova;
-use Laravel\Nova\Nova;
+use Laravel\Nova\Nova as LaravelNova;
 use Armincms\Api\Http\Middleware\Authorize;
 use Zareismail\Gutenberg\Gutenberg;
 
@@ -28,6 +28,10 @@ class ServiceProvider extends LaravelServiceProvider
         
         Gutenberg::components([
             Cypress\Api::class,
+        ]);
+
+        LaravelNova::resources([
+            Nova\Api::class,
         ]);
     }
 
