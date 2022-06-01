@@ -30,7 +30,7 @@ class VerificationRequest extends AuthRequest
             return $user;
         }  
 
-        return User::firstOrCreate([
+        return User::create([
             'name' => $this->credential,
             'email' => $this->credential,
             'password' => app('hash')->make($this->password ?? $this->credential), 
