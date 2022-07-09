@@ -30,11 +30,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        $request->authenticate();
+        $user = $request->authenticate();
 
-        $request->session()->regenerate(); 
-
-        return redirect()->intended($request->redirectTo('/'));
+        return [
+            'token' => $user->createToken('login')->plainTextToken,
+        ];
     }
 
     /**
@@ -45,12 +45,9 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(AuthRequest $request)
     {
-        Auth::guard('sanctum')->logout();
+        $request->user()->currentAccessToken()->delete();
 
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken(); 
-
-        return redirect($request->redirectTo('/'));
+        return [
+        ];
     }
 }

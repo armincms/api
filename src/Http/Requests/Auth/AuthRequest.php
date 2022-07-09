@@ -1,12 +1,12 @@
 <?php
 
 namespace Armincms\Api\Http\Requests\Auth;
- 
-use Illuminate\Foundation\Http\FormRequest; 
+
+use Illuminate\Foundation\Http\FormRequest;
 use Zareismail\Gutenberg\Gutenberg;
 
 class AuthRequest extends FormRequest
-{ 
+{
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,42 +24,17 @@ class AuthRequest extends FormRequest
      */
     public function rules()
     {
-        return [ 
+        return [
         ];
-    } 
+    }
 
     /**
      * Get the login field.
-     * 
+     *
      * @return string
      */
     public function credentialKey()
     {
-        return data_get($this->widget(), 'config.credentials');
-    }
-
-    /**
-     * Get the redirect url.
-     * 
-     * @return string
-     */
-    public function redirectTo($default = '/')
-    {
-        $websiteId = data_get($this->widget(), 'config.redirectTo');
-        $website = Gutenberg::cachedWebsites()->find($websiteId);
-
-        return optional($website)->getUrl() ?? $default;
-    }
-
-    /**
-     * Get the widget for the given request.
-     * 
-     * @return \Illuminate\DAtabase\Eloquent\Model
-     */
-    public function widget()
-    {
-        return Gutenberg::cachedWidgets()->first(function($widget) {
-            return $widget->uriKey() === $this->input('_widget');
-        });
+        return $this->input('credential', 'name');
     }
 }

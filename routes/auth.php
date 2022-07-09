@@ -9,31 +9,31 @@ use Armincms\Api\Http\Controllers\Auth\PasswordResetLinkController;
 use Armincms\Api\Http\Controllers\Auth\RegisteredUserController;
 use Armincms\Api\Http\Controllers\Auth\VerificationController;
 use Armincms\Api\Http\Controllers\Auth\VerifyEmailController;
-use Illuminate\Support\Facades\Route; 
+use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
     ->middleware('guest:sanctum')
-    ->name('register'); 
+    ->name('api.register');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->middleware('guest:sanctum')
-    ->name('login'); 
+    ->name('api.login');
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
     ->middleware('guest:sanctum')
-    ->name('password.email'); 
+    ->name('api.password.email');
 
 Route::post('/reset-password', [NewPasswordController::class, 'store'])
     ->middleware('guest:sanctum')
-    ->name('password.update'); 
+    ->name('api.password.update');
 
 Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store'])
     ->middleware('auth')
-    ->name('password.confirm');
+    ->name('api.password.confirm');
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth:sanctum')
-    ->name('logout');
+    ->name('api.logout');
 
 Route::post('/verification-notification', [VerificationController::class,'create'])
     ->middleware('throttle:6,1')

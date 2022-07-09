@@ -2,14 +2,14 @@
 
 namespace Armincms\Api\Http\Requests\Auth;
 
-use Illuminate\Auth\Events\Lockout; 
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException; 
+use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends AuthRequest
-{ 
+{
     /**
      * Get the validation rules that apply to the request.
      *
@@ -18,21 +18,23 @@ class LoginRequest extends AuthRequest
     public function rules()
     {
         return [
-            'username' => ['required', 'string'],
+            $this->credentialKey() => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
 
     /**
      * Attemp to login.
-     * 
+     *
      * @return boolean
      */
     public function attempt()
-    {  
-        return $this->credentialKey() === 'name'
-            ? Auth::attempt($this->credentials('name'), $this->input('remember'))
-            : Auth::attempt($this->credentials('email'), $this->input('remember'));
+    {
+        $provider = Auth::guard('web')->getProvider();
+        $user = $provider->retrieveByCredentials($this->credentials());
+        $provider->validateCredentials($user, $this->credentials());
+
+        return $user;
     }
 
     /**
@@ -44,17 +46,19 @@ class LoginRequest extends AuthRequest
      */
     public function authenticate()
     {
-        $this->ensureIsNotRateLimited(); 
+        $this->ensureIsNotRateLimited();
 
-        if (! $this->attempt()) {
+        if (is_null($user = $this->attempt())) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'username' => __('auth.failed'),
+                $this->credentialKey() => __('auth.failed'),
             ]);
         }
 
         RateLimiter::clear($this->throttleKey());
+
+        return $user;
     }
 
     /**
@@ -75,7 +79,7 @@ class LoginRequest extends AuthRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'username' => trans('auth.throttle', [
+            $this->credentialKey() => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -89,19 +93,19 @@ class LoginRequest extends AuthRequest
      */
     public function throttleKey()
     {
-        return Str::lower($this->input('username')).'|'.$this->ip();
+        return Str::lower($this->input($this->credentialKey())).'|'.$this->ip();
     }
 
     /**
      * Get the login credentials from the request.
      *
-     * @return string
+     * @return array
      */
-    public function credentials(string $username)
+    public function credentials()
     {
         return [
-            $username => $this->input('username'),
+            $this->credentialKey() => $this->input($this->credentialKey()),
             'password' => $this->input('password'),
         ];
-    }  
+    }
 }
