@@ -9,6 +9,7 @@ use Armincms\Api\Http\Controllers\Auth\PasswordResetLinkController;
 use Armincms\Api\Http\Controllers\Auth\RegisteredUserController;
 use Armincms\Api\Http\Controllers\Auth\VerificationController;
 use Armincms\Api\Http\Controllers\Auth\VerifyEmailController;
+use Armincms\Api\Http\Controllers\ProfileUpdateController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
@@ -34,6 +35,10 @@ Route::post('/confirm-password', [ConfirmablePasswordController::class, 'store']
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth:sanctum')
     ->name('api.logout');
+
+Route::post('/profile', [ProfileUpdateController::class, 'handle'])
+    ->middleware('auth:sanctum')
+    ->name('api.profile');
 
 Route::post('/verification-notification', [VerificationController::class,'create'])
     ->middleware('throttle:6,1')

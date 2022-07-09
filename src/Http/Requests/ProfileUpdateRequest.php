@@ -1,26 +1,26 @@
 <?php
 
 namespace Armincms\Api\Http\Requests;
- 
-use Illuminate\Foundation\Http\FormRequest;  
+
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
 
 class ProfileUpdateRequest extends FormRequest
-{     
+{
     /**
      * User metadata fields.
-     * 
+     *
      * @var array
      */
-    public $metadatas = [ 
+    public $metadatas = [
         'firstname',
         'lastname',
         'mobile',
         'phone',
         'birthday',
         'gender',
-    ];  
-    
+    ];
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -38,11 +38,11 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [ 
-            'email' => 'required|email|unique:users,id,' . $this->user()->getKey(),
-            'name' => 'required|string|unique:users,id,' . $this->user()->getKey(),
-            'firstname' => 'required|string',
-            'lastname' => 'required|string',
+        return [
+            'email' => 'sometimes|email|unique:users,id,' . $this->user()->getKey(),
+            'name' => 'sometimes|string|unique:users,id,' . $this->user()->getKey(),
+            'firstname' => 'sometimes|string',
+            'lastname' => 'sometimes|string',
             'mobile' => ['nullable', function($attribute, $value, $fail) {
                 $query = $this->user()->query();
                 $found = $query
@@ -57,12 +57,12 @@ class ProfileUpdateRequest extends FormRequest
                 if ($found) return $fail(__('This mobile number already taken.'));
             }],
             'phone' => 'nullable|numeric',
-            'gender' => 'required|in:male,female',
-            'birthday' => 'sometimes|date', 
+            'gender' => 'sometimes|in:male,female',
+            'birthday' => 'sometimes|date',
             'avatar' => 'nullable|image',
-            'old_password' => [ 
+            'old_password' => [
                 'nullable',
-                'required_with:password',
+                'sometimes_with:password',
                 function($attribute, $value, $fail) {
                     if (! Hash::check($value, $this->user()->password)) {
                         return $fail(__('The old password is wrong.'));
@@ -70,8 +70,8 @@ class ProfileUpdateRequest extends FormRequest
                 }
             ],
             'password' => [
-                'nullable', 
-                'confirmed', 
+                'nullable',
+                'confirmed',
                 \Illuminate\Validation\Rules\Password::defaults()
             ],
         ];
@@ -79,15 +79,15 @@ class ProfileUpdateRequest extends FormRequest
 
     /**
      * Update user profile.
-     * 
+     *
      * @return void
      */
     public function updateUserProfile()
     {
-        $this->user()->forceFill($this->only('email', 'name')); 
+        $this->user()->forceFill($this->only('email', 'name'));
 
         if ($this->password) {
-            $this->user()->forceFill(['password' => Hash::make($this->password)]); 
+            $this->user()->forceFill(['password' => Hash::make($this->password)]);
         }
 
         $this->user()->save();
@@ -102,6 +102,6 @@ class ProfileUpdateRequest extends FormRequest
 
         $this->user()->updateMetadatas($this->only($this->metadatas));
 
-        return $this->user()->refresh();     
-    } 
+        return $this->user()->refresh();
+    }
 }
