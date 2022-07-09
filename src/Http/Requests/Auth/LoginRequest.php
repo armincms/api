@@ -31,8 +31,10 @@ class LoginRequest extends AuthRequest
     public function attempt()
     {
         $provider = Auth::guard('web')->getProvider();
-        $user = $provider->retrieveByCredentials($this->credentials());
-        $provider->validateCredentials($user, $this->credentials());
+
+        if (! is_null($user = $provider->retrieveByCredentials($this->credentials()))) {
+            $provider->validateCredentials($user, $this->credentials());
+        }
 
         return $user;
     }
