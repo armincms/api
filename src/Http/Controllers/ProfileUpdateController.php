@@ -20,4 +20,13 @@ class ProfileUpdateController extends Controller
             'message' => __('Your profile is up to date.'),
         ];
     }
+    /**
+     * Update the user profile
+     *
+     * @return array
+     */
+    public function show(ProfileUpdateRequest $request)
+    {
+        return $request->user()->serializeForWidget($request);
+    }
 }

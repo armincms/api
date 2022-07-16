@@ -39,6 +39,8 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::post('/profile', [ProfileUpdateController::class, 'handle'])
     ->middleware('auth:sanctum')
     ->name('api.profile');
+Route::get('/profile', [ProfileUpdateController::class, 'show'])
+    ->middleware('auth:sanctum');
 
 Route::post('/verification-notification', [VerificationController::class,'create'])
     ->middleware('throttle:6,1')
