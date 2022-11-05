@@ -2,19 +2,20 @@
 
 namespace Armincms\Api;
 
-use Illuminate\Support\Manager; 
+use Illuminate\Support\Manager;
 
 class LogBroker implements Broker
-{  
+{
     /**
      * Notify user by given message.
      * 
-     * @param   $user 
-     * @param   $message 
-     * @return  void     
+     * @param $user 
+     * @param string $message 
+     * @param array  $options 
+     * @return        
      */
-    public function notify($user, $message)
-    { 
-        \Log::info('verification message:'. $message);
-    } 
+    public function notify($user, string $message, array $options = [])
+    {
+        \Log::info('verification message:' . $message);
+    }
 }

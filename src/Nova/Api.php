@@ -1,14 +1,14 @@
 <?php
 
 namespace Armincms\Api\Nova;
- 
-use Armincms\Contract\Nova\Bios; 
-use Illuminate\Http\Request; 
-use Laravel\Nova\Fields\Select; 
-use Laravel\Nova\Fields\Textarea; 
+
+use Armincms\Contract\Nova\Bios;
+use Illuminate\Http\Request;
+use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Textarea;
 
 class Api extends Bios
-{  
+{
     /**
      * Get the fields displayed by the resource.
      *
@@ -16,12 +16,13 @@ class Api extends Bios
      * @return array
      */
     public function fields(Request $request)
-    { 
+    {
         return [
             Select::make(__('Message Broker'), 'api_broker')
                 ->options([
                     'log' => __('Log file'),
-                    'sms' => __('Send by mobile')
+                    'sms' => __('Send mobile SMS'),
+                    'pattern' => __('Send SMS Pattern'),
                 ]),
 
             Textarea::make(__('Verification code message'), 'api_verification_message')
@@ -30,9 +31,9 @@ class Api extends Bios
 
             Textarea::make(__('Welcome message'), 'api_welcome_message')
                 ->default('Welcome to my site Mr/Ms [USER].')
-                ->help(__('example: Welcome to my site Mr/Ms [USER].')), 
+                ->help(__('example: Welcome to my site Mr/Ms [USER].')),
         ];
-    }  
+    }
 
     /**
      * Get login page for the given website id.
@@ -62,5 +63,5 @@ class Api extends Bios
     public static function welcomeMessage()
     {
         return static::option('api_welcome_message');
-    } 
+    }
 }
